@@ -67,3 +67,19 @@ def capture_video(input_file_path, output_file_path, capture_seconds, target_fra
         if ret:
             if i == target_frame:
                 cv2.imwrite(output_file_path, frame)
+
+
+def stack_video_on_video(input_file_path_1, input_file_path_2, output_file_path, end_time):
+    # 本体をロードする。
+    base_video = mp.VideoFileClip(input_file_path_1)
+    # 動画サイズを取得を取得する。
+    w,h = moviesize = base_video.size
+    #ワイプ動画をロードする。
+    wipe_video = (mp.VideoFileClip(input_file_path_2).
+            resize((w/3,h)).
+            set_pos(('right','bottom')) )
+    # 本体とワイプを合成する。
+    final_clip = mp.CompositeVideoClip([base_video, wipe_video])
+    # 0～x 秒間で書き出す。
+    final_clip.subclip(0, end_time).write_videofile(output_file_path, fps=30)
+
