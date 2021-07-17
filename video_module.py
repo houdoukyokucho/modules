@@ -10,13 +10,13 @@ def combine_video_with_sound(input_video_path, input_sound_path, output_path):
     clip.write_videofile(output_path, audio=input_sound_path)
 
 
-def connect_videos(video_with_sound_file_name_paths, output_path):
+def connect_videos(input_file_paths, output_path):
     """
     指定したパスの複数の動画ファイルを結合して保存する。
     """
     clips = []
-    for video_with_sound_file_name_path in video_with_sound_file_name_paths:
-        clip = mp.VideoFileClip(video_with_sound_file_name_path)
+    for input_file_path in input_file_paths:
+        clip = mp.VideoFileClip(input_file_path)
         clips.append(clip)
     final_clip = mp.concatenate_videoclips(clips)
     final_clip.write_videofile(output_path, fps=30)
@@ -56,13 +56,13 @@ def capture_video(input_file_path, output_file_path, capture_seconds, target_fra
     
     last_frame = capture_seconds * fps
     first_frame = last_frame - (fps-1)
-
-    if target_frame_in_second == 'first':
-        target_frame = first_frame
-    else:
+   
+    if target_frame_in_second == 'last':
         target_frame = last_frame
+    else:
+        target_frame = first_frame
 
-    for i in range(capture_seconds * fps):
+    for i in range(last_frame+1):
         ret, frame = cap.read()
         if ret:
             if i == target_frame:

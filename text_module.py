@@ -13,3 +13,12 @@ def get_text(input_file_path):
     with open(input_file_path) as file:
         text = file.read()
         return text
+
+
+def get_text_list(input_file_path):
+    """
+    指定されたテキストデータの内容を改行ごとにリストで返す。
+    """
+    with open(input_file_path) as file:
+        texts = file.read().split()
+        return texts

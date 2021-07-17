@@ -24,15 +24,15 @@ def connect_sounds(input_file_paths, output_file_path):
     base_sound_file.export(output_file_path, format="mp3")
 
 
-def stack_sound_on_sound(input_base_file_path, input_additional_file_path, output_file_path):
+def stack_sound_on_sound(input_base_file_path, input_additional_file_path, output_file_path, insert_sound_seconds):
     """
     音声ファイルに音声ファイルを合成して保存する。
     """
     base_sound = AudioSegment.from_file(input_base_file_path, format="mp3")
     additional_sound = AudioSegment.from_file(input_additional_file_path, format="mp3")
-    # 追加音声を再生 0 秒時点に重ねる。
-    start_time_ms = 0 * 1000
-    additional_sound = additional_sound -20
+    # 追加音声を再生 x 秒時点に重ねる。
+    start_time_ms = insert_sound_seconds * 1000
+    additional_sound = additional_sound - 20
     result_sound = base_sound.overlay(additional_sound, start_time_ms)
     result_sound.export(output_file_path, format="mp3")
 
