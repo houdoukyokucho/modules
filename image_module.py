@@ -36,3 +36,26 @@ def resize_image(input_file_path, output_file_path, width, height):
     img = Image.open(input_file_path).convert("RGB")
     img_resize = img.resize((width, height))
     img_resize.save(output_file_path)
+
+
+def check_image_size(input_file_path):
+    """
+    ファイルサイズを返す。
+    """
+    image = cv2.imread(input_file_path)
+    h, w, _ = image.shape
+    image_size = {
+        'height': h,
+        'width': w,
+    }
+    return image_size
+
+
+def trim_image(input_file_path, output_file_path, left, upper, right, lower):
+    """
+    left, upper, right, lower
+    640, 0, 1280, 1280
+    """
+    image = Image.open(input_file_path)
+    croped_image = image.crop((left, upper, right, lower))
+    croped_image.save(output_file_path, quality=95)
