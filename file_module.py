@@ -3,14 +3,20 @@ import os
 import json
 
 
-def get_file_paths(input_path):
+def get_file_paths(input_path, filter_extension=None):
     """
     指定したディレクトリ内にあるファイルのパスをリストにしてを返す。
     """
     file_paths = []
     file_names = os.listdir(path=input_path)
     for file_name in file_names:
-        file_paths.append(f'{input_path}{file_name}')
+        if filter_extension:
+            if filter_extension == get_extension(file_name):
+                file_paths.append(f'{input_path}{file_name}')
+            else:
+                continue
+        else:
+            file_paths.append(f'{input_path}{file_name}')
     return file_paths
 
 
