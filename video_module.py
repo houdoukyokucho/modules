@@ -31,21 +31,21 @@ def separate_video(input_file_path, output_file_path, start_seconds, end_seconds
     cap = cv2.VideoCapture(input_file_path)
     cap_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
     cap_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-    fps = int(cap.get(cv2.CAP_PROP_FPS))
+    fps = cap.get(cv2.CAP_PROP_FPS)
     
     fourcc = cv2.VideoWriter_fourcc('m','p','4','v')
     writer = cv2.VideoWriter(output_file_path, fourcc, fps, (cap_width, cap_height))
 
-    for i in range(end_seconds * fps):
+    for i in range(int(end_seconds * fps)):
         ret, frame = cap.read()
         if ret:
-            if start_seconds * fps < i:
+            if int(start_seconds * fps) < i:
                 writer.write(frame)
     writer.release()
     cap.release()
 
 
-def capture_video(input_file_path, output_file_path, capture_seconds, target_frame_in_second='first'):
+def capture_video(input_file_path, output_file_path, capture_seconds, target_frame_in_second='last'):
     """
     時間を秒で指定して動画のキャプチャを保存する。
     target_frame_in_second で 1 秒の内の最初のフレームか、
@@ -54,10 +54,10 @@ def capture_video(input_file_path, output_file_path, capture_seconds, target_fra
     cap = cv2.VideoCapture(input_file_path)
     cap_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
     cap_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-    fps = int(cap.get(cv2.CAP_PROP_FPS))
+    fps = cap.get(cv2.CAP_PROP_FPS)
     
-    last_frame = capture_seconds * fps
-    first_frame = last_frame - (fps-1)
+    last_frame = int(capture_seconds * fps)
+    first_frame = int(last_frame - (fps-1))
    
     if target_frame_in_second == 'last':
         target_frame = last_frame
@@ -65,47 +65,6 @@ def capture_video(input_file_path, output_file_path, capture_seconds, target_fra
         target_frame = first_frame
 
     for i in range(last_frame+1):
-        ret, frame = cap.read()
-        if ret:
-            if i == target_frame:
-                cv2.imwrite(output_file_path, frame)
-
-
-def stack_video_on_video(input_file_path_1, input_file_path_2, output_file_path, end_time):
-    # 本体をロードする。
-    base_video = mp.VideoFileClip(input_file_path_1)
-    # 動画サイズを取得を取得する。
-    w,h = moviesize = base_video.size
-    #ワイプ動画をロードする。
-    wipe_video = (mp.VideoFileClip(input_file_path_2).
-            resize((w/3,h)).
-            set_pos(('right','bottom')) )
-    # 本体とワイプを合成する。
-    final_clip = mp.CompositeVideoClip([base_video, wipe_video])
-    # 0～x 秒間で書き出す。
-    final_clip.subclip(0, end_time).write_videofile(output_file_path, fps=30)
-
-
-def capture_video(input_file_path, output_file_path, capture_seconds, target_frame_in_second='first'):
-    """
-    時間を秒で指定して動画のキャプチャを保存する。
-    target_frame_in_second で 1 秒の内の最初のフレームか、
-    最後のフレームかキャプチャの対象を選択できる。
-    """
-    cap = cv2.VideoCapture(input_file_path)
-    cap_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-    cap_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-    fps = int(cap.get(cv2.CAP_PROP_FPS))
-    
-    last_frame = capture_seconds * fps
-    first_frame = last_frame - (fps-1)
-
-    if target_frame_in_second == 'first':
-        target_frame = first_frame
-    else:
-        target_frame = last_frame
-
-    for i in range(capture_seconds * fps):
         ret, frame = cap.read()
         if ret:
             if i == target_frame:
@@ -145,10 +104,22 @@ def insert_text_on_video(input_file_path, output_file_path, text, text_rgb, font
             pil_image = Image.fromarray(frame_rgb)
             draw = ImageDraw.Draw(pil_image)
             font = ImageFont.truetype('/usr/share/fonts/ipa-gothic/ipag.ttf', font_size)
-            draw.text((x, y), text, fill=text_rgb, font=font)
+            draw.text((x, y), text, fill=text_rgb, font=font, stroke_width=10,
+                    stroke_fill=(255, 255, 255, 255))
             rgb_image = cv2.cvtColor(np.array(pil_image), cv2.COLOR_RGB2BGR)
             out.write(rgb_image)
         else:
             break
     cap.release()
     out.release()
+
+
+def get_video_length(input_file_path):
+    """
+    指定した動画ファイルの再生秒数を返す。
+    """
+    cap = cv2.VideoCapture(input_file_path)
+    video_frame_count = cap.get(cv2.CAP_PROP_FRAME_COUNT)
+    video_fps = cap.get(cv2.CAP_PROP_FPS)
+    video_second_length = video_frame_count / video_fps
+    return video_second_length
