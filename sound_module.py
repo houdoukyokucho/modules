@@ -32,7 +32,7 @@ def stack_sound_on_sound(input_base_file_path, input_additional_file_path, outpu
     additional_sound = AudioSegment.from_file(input_additional_file_path, format="mp3")
     # 追加音声を再生 x 秒時点に重ねる。
     start_time_ms = insert_sound_seconds * 1000
-    additional_sound = additional_sound - 20
+    additional_sound = additional_sound
     result_sound = base_sound.overlay(additional_sound, start_time_ms)
     result_sound.export(output_file_path, format="mp3")
 
@@ -70,3 +70,11 @@ def text_to_speech(text_content, output_file_path):
     with open(output_file_path, "wb") as out:
         # Write the response to the output file.
         out.write(response.audio_content)
+
+
+def extract_sound(input_file_path, output_file_path, start_seconds, end_seconds):
+    sound = AudioSegment.from_file(input_file_path, format="mp3")
+    start = start_seconds * 1000
+    end = end_seconds * 1000
+    extracted_sound = sound[start:end]
+    extracted_sound.export(output_file_path)
