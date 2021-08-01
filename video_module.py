@@ -1,6 +1,6 @@
-import moviepy.editor as mp
 import cv2
 import numpy as np
+import moviepy.editor as mp
 from PIL import ImageFont, ImageDraw, Image
 
 
@@ -72,6 +72,9 @@ def capture_video(input_file_path, output_file_path, capture_seconds, target_fra
 
 
 def stack_video_on_video(input_file_path_1, input_file_path_2, output_file_path, end_time):
+    """
+    動画を合成して保存する。
+    """
     # 本体をロードする。
     base_video = mp.VideoFileClip(input_file_path_1)
     # 動画サイズを取得を取得する。
@@ -86,9 +89,15 @@ def stack_video_on_video(input_file_path_1, input_file_path_2, output_file_path,
     final_clip.subclip(0, end_time).write_videofile(output_file_path, fps=30)
 
 
-def insert_text_on_video(input_file_path, output_file_path, text, text_rgb, font_size, x, y):
+def insert_text_on_video(input_file_path, output_file_path, text, text_rgb, font_size, x, y, stroke_fill, stroke_width):
     """
     動画にテキストを挿入して保存する。
+    text_rgb: テキストの色を指定
+    font_size: テキストの大きさを指定
+    x: 横軸の座標を指定
+    y: 縦軸の座標を指定
+    stroke_fill: 文字の縁の色を指定
+    stroke_width: 文字の縁の大きさを指定
     """
     cap = cv2.VideoCapture(input_file_path)
     fps = cap.get(cv2.CAP_PROP_FPS)
@@ -104,8 +113,7 @@ def insert_text_on_video(input_file_path, output_file_path, text, text_rgb, font
             pil_image = Image.fromarray(frame_rgb)
             draw = ImageDraw.Draw(pil_image)
             font = ImageFont.truetype('/usr/share/fonts/ipa-gothic/ipag.ttf', font_size)
-            draw.text((x, y), text, fill=text_rgb, font=font, stroke_width=10,
-                    stroke_fill=(255, 255, 255, 255))
+            draw.text((x, y), text, fill=text_rgb, font=font, stroke_width=stroke_width, stroke_fill=stroke_fill)
             rgb_image = cv2.cvtColor(np.array(pil_image), cv2.COLOR_RGB2BGR)
             out.write(rgb_image)
         else:
