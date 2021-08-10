@@ -131,3 +131,13 @@ def get_video_length(input_file_path):
     video_fps = cap.get(cv2.CAP_PROP_FPS)
     video_second_length = video_frame_count / video_fps
     return video_second_length
+
+
+def get_video_size(input_file_path):
+    """
+    動画のサイズを返す。
+    """
+    cap = cv2.VideoCapture(input_file_path)
+    width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+    height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    return (width, height)
