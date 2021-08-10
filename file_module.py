@@ -1,6 +1,7 @@
 import datetime
 import json
 import os
+import shutil
 import zipfile
 
 
@@ -80,3 +81,25 @@ def put_index_on_file_name_if_exist(file_name_path):
 
 def delete_file(input_file_path):
     os.remove(input_file_path)
+
+
+def attach_index_to_file_name_if_exist(file_name_path):
+    """
+    受け取ったファイルのパスが存在する場合、ファイル名の最後に () で囲んだインデックスを付与して返す。
+    ./path/file.txt も ./path/file(1).txt も存在する場合 ./path/file(2) を返す。
+    インデックスは　100 を上限とする。
+    """
+    if os.path.exists(file_name_path):
+        dirpath, file_name = os.path.split(file_name_path)
+        name, ext = os.path.splitext(file_name)
+        for i in range(2, 100):
+            new_file_name = f'{name}({i}){ext}'
+            new_file_path = os.path.join(dirpath, new_file_name)
+            file_name_path = new_file_path
+            if not os.path.exists(new_file_path):
+                break
+    return file_name_path
+
+
+def copy_file(input_file_path, output_file_path):
+    shutil.copyfile(input_file_path, output_file_path)
