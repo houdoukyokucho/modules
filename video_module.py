@@ -24,7 +24,7 @@ def connect_videos(input_file_paths, output_path):
     final_clip.write_videofile(output_path, fps=30)
 
 
-def separate_video(input_file_path, output_file_path, start_seconds, end_seconds):
+def extract_video(input_file_path, output_file_path, start_seconds, end_seconds):
     """
     始まりの時間と終わりの時間を秒数で指定し、その間の動画を抽出し保存する。
     """
