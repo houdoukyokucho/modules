@@ -113,6 +113,11 @@ def insert_text_on_video(input_file_path, output_file_path, text, text_rgb, font
             pil_image = Image.fromarray(frame_rgb)
             draw = ImageDraw.Draw(pil_image)
             font = ImageFont.truetype('/usr/share/fonts/ipa-gothic/ipag.ttf', font_size)
+            w, h = draw.textsize(text, font=font)
+            if x == 'center':
+                x = (width-w)/2
+            if y == 'center':
+                y = (height-h)/2
             draw.text((x, y), text, fill=text_rgb, font=font, stroke_width=stroke_width, stroke_fill=stroke_fill)
             rgb_image = cv2.cvtColor(np.array(pil_image), cv2.COLOR_RGB2BGR)
             out.write(rgb_image)
